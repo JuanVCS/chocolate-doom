@@ -41,6 +41,8 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+#include "textscreen.h"
+
 #define VITA_SCR_W 960
 #define VITA_SCR_H 544
 
@@ -248,6 +250,46 @@ void I_VitaCleanupGraphics(void)
     vitatex_datap = NULL;
     sdl_window = NULL;
     sdl_renderer = NULL;
+}
+
+// This attempts to use libtextscreen to draw a simple error popup box.
+
+static int vita_show_error = 1;
+
+static void ExitErrorMessage(TXT_UNCAST_ARG(widget), void *unused)
+{
+    vita_show_error = 0;
+}
+
+void I_VitaShowError(char *msg)
+{
+    txt_window_t *window;
+    txt_window_action_t *close;
+
+    vita2d_wait_rendering_done();
+
+    if (!TXT_Init()) return;
+
+    TXT_SetDesktopTitle(PACKAGE_STRING);
+    window = TXT_NewWindow("Error");
+    TXT_AddWidget(window, TXT_NewLabel(msg));
+    close = TXT_NewWindowAction(KEY_ESCAPE, "Exit");
+    TXT_SignalConnect(close, "pressed", ExitErrorMessage, NULL);
+
+    TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, close);
+    TXT_SetWindowAction(window, TXT_HORIZ_LEFT, NULL);
+    TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_BOTTOM,
+                                  TXT_SCREEN_W / 2, TXT_SCREEN_H - 9);
+
+    vita_show_error = 1;
+    while (vita_show_error)
+    {
+        TXT_DispatchEvents();
+        TXT_DrawDesktop();
+        TXT_Sleep(100);
+    }
+
+    TXT_Shutdown();
 }
 
 void I_ShutdownGraphics(void)

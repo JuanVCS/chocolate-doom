@@ -232,6 +232,7 @@ void I_BindVariables(void)
 
 #ifdef __vita__
 extern void I_VitaCleanupGraphics(void);
+extern void I_VitaShowError(char *msg);
 #endif
 
 //
@@ -348,6 +349,7 @@ void I_Error (const char *error, ...)
     // abort();
 
 #ifdef __vita__
+    I_VitaShowError(msgbuf);
     I_VitaCleanupGraphics();
 #endif
     SDL_Quit();
