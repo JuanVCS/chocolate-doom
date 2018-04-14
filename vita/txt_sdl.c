@@ -709,12 +709,14 @@ static const char *NameForKey(int key)
     const char *result;
     int i;
 
-    // Overrides purely for aesthetical reasons, so that default
-    // window accelerator keys match those of setup.exe.
+    // Overrides to match Vita button names.
     switch (key)
     {
-        case KEY_ESCAPE: return "ESC";
-        case KEY_ENTER:  return "ENTER";
+        case KEY_ESCAPE:    return "START";
+        case KEY_ENTER:     return "CROSS";
+        case ' ':           return "SQUARE";
+        case KEY_BACKSPACE: return "CIRCLE";
+        case KEY_LALT:      return "TRIANGLE";
         default:
             break;
     }
