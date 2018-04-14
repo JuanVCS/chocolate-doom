@@ -216,12 +216,19 @@ static void FileDialogDraw(void)
     int scroll = ui_fd.scroll;
     int numfiles = ui_fd.flist.numfiles;
     int stop = scroll + SCROLL_SZ;
+
+    if (scroll > 0)
+        R_Print(0, 160, 160 - 24, C_LTGREY, "...");
+
     for (int i = scroll; i < numfiles && i < stop; ++i)
     {
         unsigned c = (ui_fd.sel == i) ? C_GREEN : C_WHITE;
         R_Print(0, 160, y, c, ui_fd.flist.files[i]);
         y += 24;
     }
+
+    if (stop < numfiles)
+        R_Print(0, 160, y, C_LTGREY, "...");
 }
 
 // options stuff
@@ -385,12 +392,18 @@ static void OptsDraw(struct Menu *menu)
     int scroll = menu->scroll;
     int stop = scroll + SCROLL_SZ;
 
+    if (scroll > 0)
+        R_Print(0, 160, 160 - 24, C_LTGREY, "...");
+
     int y = 160;
     for (int i = scroll; i < numopts && i < stop; ++i)
     {
         OptDraw(opts + i, 160, y, i == sel);
         y += 24;
     }
+
+    if (stop < numopts)
+        R_Print(0, 160, y, C_LTGREY, "...");
 }
 
 static void OptLoadVar(struct Option *opt)
