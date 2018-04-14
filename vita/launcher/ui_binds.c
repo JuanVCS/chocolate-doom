@@ -12,6 +12,10 @@ void UI_MenuBinds_Reload(void);
 
 static struct Option bind_opts[] =
 {
+    { OPT_BUTTON, "Forward", "key_up", NULL, .button = -1 },
+    { OPT_BUTTON, "Backward", "key_down", NULL, .button = -1 },
+    { OPT_BUTTON, "Turn left", "key_left", NULL, .button = -1 },
+    { OPT_BUTTON, "Turn right", "key_right", NULL, .button = -1 },
     { OPT_BUTTON, "Fire", "key_fire", NULL, .button = B_RTRIGGER },
     { OPT_BUTTON, "Use", "key_use", NULL, .button = B_SQUARE },
     { OPT_BUTTON, "Run", "key_speed", NULL, .button = B_LTRIGGER },
@@ -36,6 +40,10 @@ static struct Option bind_opts[] =
 
 static struct Option bind_opts_strife[] =
 {
+    { OPT_BUTTON, "Forward", "key_up", NULL, .button = -1 },
+    { OPT_BUTTON, "Backward", "key_down", NULL, .button = -1 },
+    { OPT_BUTTON, "Turn left", "key_left", NULL, .button = -1 },
+    { OPT_BUTTON, "Turn right", "key_right", NULL, .button = -1 },
     { OPT_BUTTON, "Fire", "key_fire", NULL, .button = B_RTRIGGER },
     { OPT_BUTTON, "Use", "key_use", NULL, .button = B_SQUARE },
     { OPT_BUTTON, "Run", "key_speed", NULL, .button = B_LTRIGGER },
@@ -59,7 +67,7 @@ struct Menu ui_menu_binds =
     MENU_BINDS,
     "Buttons",
     "Change button bindings",
-    bind_opts, 8, 0, 0,
+    bind_opts, 12, 0, 0,
     UI_MenuBinds_Init,
     UI_MenuBinds_Update,
     UI_MenuBinds_Draw,
@@ -90,22 +98,22 @@ void UI_MenuBinds_Reload(void)
         case GAME_HERETIC_SW:
         case GAME_HERETIC:
             self->opts = bind_opts;
-            self->numopts = 8 + 9;
+            self->numopts = 12 + 9;
             break;
 
         case GAME_HEXEN:
             self->opts = bind_opts;
-            self->numopts = 8 + 9 + 1;
+            self->numopts = 12 + 9 + 1;
             break;
 
         case GAME_STRIFE:
             self->opts = bind_opts_strife;
-            self->numopts = 16;
+            self->numopts = 20;
             break;
 
         default: // doom
             self->opts = bind_opts;
-            self->numopts = 8;
+            self->numopts = 12;
             break;
     }
 }
