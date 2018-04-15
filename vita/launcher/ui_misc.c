@@ -30,6 +30,7 @@ static struct Option misc_opts[] =
     { OPT_BOOLEAN, "Record demo" },
     { OPT_INTEGER, "Skill", .inum = { 0, 5, 1, 0 } },
     { OPT_INTEGER, "Starting map", .inum = { 0, 99, 1, 0 } },
+    { OPT_INTEGER, "Time limit (min)", .inum = { 0, 120, 1, 0 } },
     // hexen only
     { 
         OPT_INTEGER,
@@ -73,8 +74,9 @@ void UI_MenuMisc_Reload(void)
     misc_opts[1].codevar = &fs_games[ui_game].record;
     misc_opts[2].codevar = &fs_games[ui_game].skill;
     misc_opts[3].codevar = &fs_games[ui_game].warp;
-    misc_opts[4].codevar = &fs_games[ui_game].charclass;
+    misc_opts[4].codevar = &fs_games[ui_game].timer;
+    misc_opts[5].codevar = &fs_games[ui_game].charclass;
 
     self->opts = misc_opts;
-    self->numopts = 4 + (ui_game == GAME_HEXEN);
+    self->numopts = 5 + (ui_game == GAME_HEXEN);
 }

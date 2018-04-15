@@ -57,6 +57,7 @@ struct Game
     int warp;
     char monsters[2];
     int record;
+    int timer;
     int charclass;
 };
 

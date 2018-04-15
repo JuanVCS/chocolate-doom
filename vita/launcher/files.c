@@ -199,6 +199,9 @@ static void WriteResponseFile(int game, const char *fname)
     if (g->skill)
         fprintf(f, "-skill %d\n", g->skill);
 
+    if (g->timer)
+        fprintf(f, "-timer %d\n", g->timer);
+
     if (g->warp)
     {
         if (game < GAME_DOOM2 || game == GAME_HERETIC || game == GAME_HERETIC_SW)
