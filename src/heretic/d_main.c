@@ -275,9 +275,9 @@ void D_DoomLoop(void)
 ===============================================================================
 */
 
-int demosequence;
-int pagetic;
-char *pagename;
+static int demosequence;
+static int pagetic;
+static const char *pagename;
 
 
 /*
@@ -494,7 +494,7 @@ char smsg[80];                  // status bar line
 
 static int startup_line = STARTUP_WINDOW_Y;
 
-void hprintf(char *string)
+void hprintf(const char *string)
 {
     if (using_graphical_startup)
     {
@@ -527,7 +527,7 @@ void drawstatus(void)
     }
 }
 
-void status(char *string)
+static void status(const char *string)
 {
     if (using_graphical_startup)
     {
@@ -617,7 +617,7 @@ static void finishStartup(void)
 }
 
 char tmsg[300];
-void tprintf(char *msg, int initflag)
+void tprintf(const char *msg, int initflag)
 {
     printf("%s", msg);
 }

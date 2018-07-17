@@ -330,7 +330,7 @@ static void InitFonts(void)
 //
 //---------------------------------------------------------------------------
 
-void MN_DrTextA(char *text, int x, int y)
+void MN_DrTextA(const char *text, int x, int y)
 {
     char c;
     patch_t *p;
@@ -358,7 +358,7 @@ void MN_DrTextA(char *text, int x, int y)
 //
 //---------------------------------------------------------------------------
 
-int MN_TextAWidth(char *text)
+int MN_TextAWidth(const char *text)
 {
     char c;
     int width;
@@ -388,7 +388,7 @@ int MN_TextAWidth(char *text)
 //
 //---------------------------------------------------------------------------
 
-void MN_DrTextB(char *text, int x, int y)
+void MN_DrTextB(const char *text, int x, int y)
 {
     char c;
     patch_t *p;
@@ -416,7 +416,7 @@ void MN_DrTextB(char *text, int x, int y)
 //
 //---------------------------------------------------------------------------
 
-int MN_TextBWidth(char *text)
+int MN_TextBWidth(const char *text)
 {
     char c;
     int width;
@@ -472,8 +472,8 @@ void MN_Drawer(void)
     int x;
     int y;
     MenuItem_t *item;
-    char *message;
-    char *selName;
+    const char *message;
+    const char *selName;
 
     if (MenuActive == false)
     {
@@ -595,7 +595,7 @@ static void DrawFilesMenu(void)
 
 static void DrawLoadMenu(void)
 {
-    char *title;
+    const char *title;
 
     title = DEH_String("LOAD GAME");
 
@@ -615,7 +615,7 @@ static void DrawLoadMenu(void)
 
 static void DrawSaveMenu(void)
 {
-    char *title;
+    const char *title;
 
     title = DEH_String("SAVE GAME");
 

@@ -214,7 +214,7 @@ void HU_Stop(void)
 void HU_Start(void)
 {
     int         i;
-    char*       s;
+    const char *s;
 
     // haleyjd 20120211: [STRIFE] not called here.
     //if (headsupactive)
@@ -313,12 +313,12 @@ void HU_Erase(void)
 //
 //  Fastcall Registers:   edx          ebx
 //      Temp Registers:   esi          edi
-void HU_addMessage(char *prefix, char *message)
+static void HU_addMessage(const char *prefix, const char *message)
 {
     char  c;         // eax
     int   width = 0; // edx
-    char *rover1;    // ebx (in first loop)
-    char *rover2;    // ecx (in second loop)
+    const char *rover1;    // ebx (in first loop)
+    const char *rover2;    // ecx (in second loop)
     char *bufptr;    // ebx (in second loop)
     char buffer[HU_MAXLINELENGTH+2];  // esp+52h
 
