@@ -1,6 +1,7 @@
 ## Building the Vita port
 ### Requirements
 * VitaSDK installed and in PATH;
+* libFLAC (run `vdpm flac` to install it if it's not present by default);
 * [This fork](https://github.com/frangarcj/vita2dlib/tree/fbo) of Vita2D;
 * [Latest release](https://github.com/frangarcj/vita-shader-collection/releases/latest) of Vita Shader Collection.
 

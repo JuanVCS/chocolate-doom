@@ -99,9 +99,12 @@ EXTERNAL_LIBS =\
 -lvita2d               \
 -lvitashaders          \
 -lpng                  \
+-lmikmod               \
 -lvorbisfile           \
 -lvorbis               \
 -logg                  \
+-lFLAC                 \
+-lmpg123               \
 -lz                    \
 -lm                    \
 -lc                    \
