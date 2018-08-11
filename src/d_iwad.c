@@ -782,11 +782,11 @@ char *D_FindWADByName(const char *name)
 //
 // D_TryWADByName
 //
-// Searches for a WAD by its filename, or passes through the filename
+// Searches for a WAD by its filename, or returns a copy of the filename
 // if not found.
 //
 
-char *D_TryFindWADByName(char *filename)
+char *D_TryFindWADByName(const char *filename)
 {
     char *result;
 
@@ -798,7 +798,7 @@ char *D_TryFindWADByName(char *filename)
     }
     else
     {
-        return filename;
+        return M_StringDuplicate(filename);
     }
 }
 
@@ -923,7 +923,7 @@ const char *D_SaveGameIWADName(GameMission_t gamemission)
     return "unknown.wad";
 }
 
-char *D_SuggestIWADName(GameMission_t mission, GameMode_t mode)
+const char *D_SuggestIWADName(GameMission_t mission, GameMode_t mode)
 {
     int i;
 
@@ -938,7 +938,7 @@ char *D_SuggestIWADName(GameMission_t mission, GameMode_t mode)
     return "unknown.wad";
 }
 
-char *D_SuggestGameName(GameMission_t mission, GameMode_t mode)
+const char *D_SuggestGameName(GameMission_t mission, GameMode_t mode)
 {
     int i;
 
