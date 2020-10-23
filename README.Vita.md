@@ -66,6 +66,8 @@ The `Merge file` option is the launcher version of the `-merge` command line opt
 
 You can specify custom command line parameters in a [response file](https://doomwiki.org/wiki/Parameter#.40), then load it using the `Override response file` option. Don't forget to select the correct game.
 
+By popular request some of the static render limits (`MAXVISPLANES`, `MAXVISSPRITES`, `MAXDRAWSEGS`) have been quadrupled in this fork to accomodate for SIGIL.
+
 ## Credits
 - [these people](https://github.com/chocolate-doom/chocolate-doom/blob/master/AUTHORS) for Chocolate Doom itself;
 - Vita SDK Team for the Vita SDK;
