@@ -13,7 +13,7 @@ OBJS := $(CFILES:.c=.o)
 PREFIX = arm-vita-eabi
 CC = $(PREFIX)-gcc
 CFLAGS =\
-	-g -mtune=cortex-a9 -mfpu=neon -Ofast -Wl,-q -Wfatal-errors -fsigned-char -flto \
+	-g -mtune=cortex-a9 -mfpu=neon -Ofast -Wl,-q -Wfatal-errors -fsigned-char -flto -fno-short-enums \
 	-I. -I.. \
 	-DCHOCOLATE_BUILD_COMMIT="\"$(shell git rev-parse --short HEAD 2> /dev/null || echo notset)\""
 
