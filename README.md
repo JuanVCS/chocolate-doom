@@ -72,6 +72,8 @@ chocolate-doom -merge aoddoom1.wad -deh aoddoom1.deh  (Army of Darkness Doom)
 
 ## Other information
 
+ * For information about the Vita port, see [README.Vita.md](https://github.com/fgsfdsfgs/chocolate-doom/blob/master/README.Vita.md).
+
  * Chocolate Doom includes a number of different options for music
    playback. See the README.Music file for more details.
 

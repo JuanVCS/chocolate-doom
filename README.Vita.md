@@ -2,10 +2,10 @@
 ### Requirements
 * VitaSDK installed and in PATH;
 * libFLAC (run `vdpm flac` to install it if it's not present by default);
-* [This fork](https://github.com/frangarcj/vita2dlib/tree/fbo) of Vita2D;
-* [Latest release](https://github.com/frangarcj/vita-shader-collection/releases/latest) of Vita Shader Collection.
 
-Both libraries should be installed to the SDK directory (i. e. to `$(VITASDK)/arm-vita-eabi/lib` and `$(VITASDK)/arm-vita-eabi/include`).
+The required fork of [libvita2d](https://github.com/frangarcj/vita2dlib/tree/fbo) and
+[vita-shader-collection](https://github.com/frangarcj/vita-shader-collection) are now
+present in this repository. You don't need to install them manually.
 
 ### Build instructions
 Run `make -f Makefile.vita`. This should produce a VPK.
