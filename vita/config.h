@@ -80,7 +80,7 @@
 #define PACKAGE_NAME "Chocolate Doom"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Chocolate Doom 3.0.0"
+#define PACKAGE_STRING "Chocolate Doom 3.0.1"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "chocolate-doom"
@@ -89,7 +89,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "3.0.0"
+#define PACKAGE_VERSION "3.0.1"
 
 /* Change this when you create your awesome forked version */
 #define PROGRAM_PREFIX "chocolate-"
@@ -98,7 +98,7 @@
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "3.0.0"
+#define VERSION "3.0.1"
 
 /* Vita-specific stuff */
 #include <vitasdk.h>
