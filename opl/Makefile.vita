@@ -14,12 +14,12 @@ OBJS =\
 	opl3.o
 
 CFLAGS =\
--mtune=cortex-a9 -mfpu=neon -mthumb                   \
--O3 -g                                                \
--fsigned-char -fno-short-enums -flto                  \
--Wall -Wdeclaration-after-statement -Wredundant-decls \
--D_REENTRANT -DHAVE_CONFIG_H                          \
--I. -I../vita -I../src                                \
+-mtune=cortex-a9 -mfpu=neon -mthumb                    \
+-O3 -g                                                 \
+-fsigned-char -flto                                    \
+-Wall -Wdeclaration-after-statement -Wredundant-decls  \
+-D_REENTRANT -DHAVE_CONFIG_H                           \
+-I. -I../vita -I../src                                 \
 -I$(VITAROOT)/include/SDL2
 
 libopl.a: $(OBJS)

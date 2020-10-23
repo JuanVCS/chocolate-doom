@@ -4,35 +4,35 @@
 //
 
 // use https://github.com/frangarcj/vita2dlib/tree/fbo
-// and https://github.com/frangarcj/vita-shader-collection/releases
+// and https://github.com/frangarcj/shaders/releases
 
 #include "shader.h"
 
-#include "shaders/lcd3x_v.h"
-#include "shaders/lcd3x_f.h"
-#include "shaders/gtu_v.h"
-#include "shaders/gtu_f.h"
-#include "shaders/texture_v.h"
-#include "shaders/texture_f.h"
-#include "shaders/opaque_v.h"
-#include "shaders/bicubic_f.h"
-#include "shaders/xbr_2x_v.h"
-#include "shaders/xbr_2x_f.h"
-#include "shaders/xbr_2x_fast_v.h"
-#include "shaders/xbr_2x_fast_f.h"
-#include "shaders/advanced_aa_v.h"
-#include "shaders/advanced_aa_f.h"
-#include "shaders/scale2x_f.h"
-#include "shaders/scale2x_v.h"
-#include "shaders/sharp_bilinear_f.h"
-#include "shaders/sharp_bilinear_v.h"
-#include "shaders/sharp_bilinear_simple_f.h"
-#include "shaders/sharp_bilinear_simple_v.h"
-// #include "shaders/xbr_2x_noblend_f.h"
-// #include "shaders/xbr_2x_noblend_v.h"
-#include "shaders/fxaa_v.h"
-#include "shaders/fxaa_f.h"
-#include "shaders/crt_easymode_f.h"
+#include "shaders/includes/lcd3x_v.h"
+#include "shaders/includes/lcd3x_f.h"
+#include "shaders/includes/gtu_v.h"
+#include "shaders/includes/gtu_f.h"
+#include "shaders/includes/texture_v.h"
+#include "shaders/includes/texture_f.h"
+#include "shaders/includes/opaque_v.h"
+#include "shaders/includes/bicubic_f.h"
+#include "shaders/includes/xbr_2x_v.h"
+#include "shaders/includes/xbr_2x_f.h"
+#include "shaders/includes/xbr_2x_fast_v.h"
+#include "shaders/includes/xbr_2x_fast_f.h"
+#include "shaders/includes/advanced_aa_v.h"
+#include "shaders/includes/advanced_aa_f.h"
+#include "shaders/includes/scale2x_f.h"
+#include "shaders/includes/scale2x_v.h"
+#include "shaders/includes/sharp_bilinear_f.h"
+#include "shaders/includes/sharp_bilinear_v.h"
+#include "shaders/includes/sharp_bilinear_simple_f.h"
+#include "shaders/includes/sharp_bilinear_simple_v.h"
+// #include "shaders/includes/xbr_2x_noblend_f.h"
+// #include "shaders/includes/xbr_2x_noblend_v.h"
+#include "shaders/includes/fxaa_v.h"
+#include "shaders/includes/fxaa_f.h"
+#include "shaders/includes/crt_easymode_f.h"
 
 
 vita2d_shader *Vita_SetShader(VitaShader shaderType)
@@ -63,8 +63,10 @@ vita2d_shader *Vita_SetShader(VitaShader shaderType)
             break;
     }
 
-    vita2d_set_texture_shader(shader);
-    vita2d_set_texture_wvp_uniform(shader);
+    vita2d_texture_set_program(shader->vertexProgram, shader->fragmentProgram);
+    vita2d_texture_set_wvp(shader->wvpParam);
+    vita2d_texture_set_vertexInput(&shader->vertexInput);
+    vita2d_texture_set_fragmentInput(&shader->fragmentInput);
 
     for(int i = 0; i < 3; i++)
     {

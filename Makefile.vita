@@ -17,22 +17,22 @@ vpk: doom heretic hexen strife launcher
 		--add vita/build/sce_sys/livearea/contents/template.xml=sce_sys/livearea/contents/template.xml \
 		$(VPKNAME).vpk
 
-doom: textscreen/libtextscreen.a opl/libopl.a pcsound/libpcsound.a
+doom: textscreen/libtextscreen.a opl/libopl.a pcsound/libpcsound.a vita/vita2dlib/libvita2d/libvita2d.a
 	$(MAKE) -C src -f Makefile.vita $@
 	cp -f src/doom.elf.unstripped.elf doom.elf.unstripped.elf
 	cp -f src/doom.bin vita/build/doom.bin
 
-heretic: textscreen/libtextscreen.a opl/libopl.a pcsound/libpcsound.a
+heretic: textscreen/libtextscreen.a opl/libopl.a pcsound/libpcsound.a vita/vita2dlib/libvita2d/libvita2d.a
 	$(MAKE) -C src -f Makefile.vita $@
 	cp -f src/heretic.elf.unstripped.elf heretic.elf.unstripped.elf
 	cp -f src/heretic.bin vita/build/heretic.bin
 
-hexen: textscreen/libtextscreen.a opl/libopl.a pcsound/libpcsound.a
+hexen: textscreen/libtextscreen.a opl/libopl.a pcsound/libpcsound.a vita/vita2dlib/libvita2d/libvita2d.a
 	$(MAKE) -C src -f Makefile.vita $@
 	cp -f src/hexen.elf.unstripped.elf hexen.elf.unstripped.elf
 	cp -f src/hexen.bin vita/build/hexen.bin
 
-strife: textscreen/libtextscreen.a opl/libopl.a pcsound/libpcsound.a
+strife: textscreen/libtextscreen.a opl/libopl.a pcsound/libpcsound.a vita/vita2dlib/libvita2d/libvita2d.a
 	$(MAKE) -C src -f Makefile.vita $@
 	cp -f src/strife.elf.unstripped.elf strife.elf.unstripped.elf
 	cp -f src/strife.bin vita/build/strife.bin
@@ -51,6 +51,9 @@ opl/libopl.a:
 pcsound/libpcsound.a:
 	$(MAKE) -C pcsound -f Makefile.vita
 
+vita/vita2dlib/libvita2d/libvita2d.a:
+	$(MAKE) -C vita/vita2dlib/libvita2d
+
 clean:
 	@rm -rf param.sfo vita/build/sce_sys/param.sfo vita/build/eboot.bin
 	@rm -rf vita/build/doom.bin vita/build/heretic.bin vita/build/hexen.bin vita/build/strife.bin
@@ -59,3 +62,4 @@ clean:
 	$(MAKE) -C opl -f Makefile.vita clean
 	$(MAKE) -C pcsound -f Makefile.vita clean
 	$(MAKE) -C vita/launcher -f Makefile.vita clean
+	$(MAKE) -C vita/vita2dlib/libvita2d clean

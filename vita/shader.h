@@ -9,7 +9,7 @@
 #ifndef PSP2_SHADER_H
 #define PSP2_SHADER_H
 
-#include <vita2d.h>
+#include "vita2dlib/libvita2d/include/vita2d.h"
 
 typedef enum VitaShader
 {

@@ -1,5 +1,5 @@
 LIBS =\
-	-lvita2d -lvitashaders -lSceAppMgr_stub -lSceDisplay_stub -lSceGxm_stub \
+	-lvita2d -lSceAppMgr_stub -lSceDisplay_stub -lSceGxm_stub \
 	-lSceSysmodule_stub -lSceTouch_stub -lSceCtrl_stub -lm \
 	-lScePgf_stub -lSceNet_stub -lSceNetCtl_stub -ljpeg -lfreetype -lc \
 	-lSceAppUtil_stub -lSceCommonDialog_stub -lpng16 -lz
@@ -13,7 +13,7 @@ OBJS := $(CFILES:.c=.o)
 PREFIX = arm-vita-eabi
 CC = $(PREFIX)-gcc
 CFLAGS =\
-	-g -mtune=cortex-a9 -mfpu=neon -Ofast -Wl,-q -Wfatal-errors -fsigned-char -flto -fno-short-enums \
+	-g -mtune=cortex-a9 -mfpu=neon -Ofast -Wl,-q -Wfatal-errors -fsigned-char -flto \
 	-I. -I.. \
 	-DCHOCOLATE_BUILD_COMMIT="\"$(shell git rev-parse --short HEAD 2> /dev/null || echo notset)\""
 

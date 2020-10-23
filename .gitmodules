@@ -1,3 +1,7 @@
 [submodule "quickcheck"]
 	path = quickcheck
 	url = https://github.com/chocolate-doom/quickcheck.git
+[submodule "vita/vita2dlib"]
+	path = vita/vita2dlib
+	url = https://github.com/frangarcj/vita2dlib.git
+	branch = fbo
