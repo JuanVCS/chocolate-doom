@@ -3,18 +3,19 @@ AC_INIT(Chocolate Doom, 3.0.0,
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Conservative source port"
-PACKAGE_COPYRIGHT="Copyright (C) 1993-2018"
+PACKAGE_COPYRIGHT="Copyright (C) 1993-2020"
 PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="Simon Howard"
 PACKAGE_URL="https://www.chocolate-doom.org/"
 PACKAGE_RDNS="org.chocolate_doom"
-PACKAGE_ISSUES="https://github.com/chocolate-doom/chocolate-doom/issues"
+PACKAGE_BUGREPORT="https://github.com/chocolate-doom/chocolate-doom/issues"
 
 AC_CONFIG_AUX_DIR(autotools)
 AC_CANONICAL_HOST
 
 orig_CFLAGS="$CFLAGS"
 
+AM_PROG_AR
 AC_PROG_CC
 AC_PROG_RANLIB
 AC_CHECK_PROG(HAVE_PYTHON, python, true, false)
@@ -30,9 +31,53 @@ then
         CFLAGS="-O$OPT_LEVEL -g $WARNINGS $orig_CFLAGS"
 fi
 
-PKG_CHECK_MODULES(SDL, [sdl2 >= 2.0.1])
-PKG_CHECK_MODULES(SDLMIXER, [SDL2_mixer >= 2.0.0])
+PKG_CHECK_MODULES(SDL, [sdl2 >= 2.0.7])
+PKG_CHECK_MODULES(SDLMIXER, [SDL2_mixer >= 2.0.2])
 PKG_CHECK_MODULES(SDLNET, [SDL2_net >= 2.0.0])
+
+# Check for bash-completion.
+AC_ARG_ENABLE([bash-completion],
+AS_HELP_STRING([--disable-bash-completion], [Disable bash-completion])
+)
+AS_IF([test "x$enable_bash_completion" != xno], [
+    AS_IF([test "x$HAVE_PYTHON" = xfalse], [
+        AC_MSG_WARN([Building bash-completion requires Python, but Python not found])
+        enable_bash_completion=no
+    ])
+])
+
+# Check for doc.
+AC_ARG_ENABLE([doc],
+AS_HELP_STRING([--disable-doc], [Disable documentation])
+)
+AS_IF([test "x$enable_doc" != xno], [
+    AS_IF([test "x$HAVE_PYTHON" = xfalse], [
+        AC_MSG_WARN([Building documentation requires Python, but Python not found])
+        enable_doc=no
+    ])
+])
+
+# Check for fonts.
+AC_ARG_ENABLE([fonts],
+AS_HELP_STRING([--disable-fonts], [Disable fonts])
+)
+AS_IF([test "x$enable_fonts" != xno], [
+    AS_IF([test "x$HAVE_PYTHON" = xfalse], [
+        AC_MSG_WARN([Building fonts require Python, but Python not found])
+        enable_fonts=no
+    ])
+])
+
+# Check for icons.
+AC_ARG_ENABLE([icons],
+AS_HELP_STRING([--disable-icons], [Disable icons])
+)
+AS_IF([test "x$enable_icons" != xno], [
+    AS_IF([test "x$HAVE_PYTHON" = xfalse], [
+        AC_MSG_WARN([Building icons require Python, but Python not found])
+        enable_icons=no
+    ])
+])
 
 # Check for libsamplerate.
 AC_ARG_WITH([libsamplerate],
@@ -61,7 +106,7 @@ AS_HELP_STRING([--without-libpng],
     [with_libpng=check]
 ])
 AS_IF([test "x$with_libpng" != xno], [
-    PKG_CHECK_MODULES(PNG, libpng >= 1.6.10, [
+    PKG_CHECK_MODULES(PNG, libpng >= 1.2.50, [
         AC_DEFINE([HAVE_LIBPNG], [1], [libpng installed])
     ], [
         AS_IF([test "x$with_libpng" != xcheck], [AC_MSG_FAILURE(
@@ -76,7 +121,7 @@ CFLAGS="$CFLAGS $SDL_CFLAGS ${SAMPLERATE_CFLAGS:-} ${PNG_CFLAGS:-}"
 LDFLAGS="$LDFLAGS $SDL_LIBS ${SAMPLERATE_LIBS:-} ${PNG_LIBS:-}"
 AC_CHECK_LIB(m, log)
 
-AC_CHECK_HEADERS([linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
+AC_CHECK_HEADERS([dirent.h linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
 AC_CHECK_FUNCS(mmap ioperm)
 AC_CHECK_DECLS([strcasecmp, strncasecmp], [], [], [[#include <strings.h>]])
 
@@ -85,13 +130,6 @@ AC_CHECK_DECLS([strcasecmp, strncasecmp], [], [], [[#include <strings.h>]])
 
 AC_CHECK_LIB(i386, i386_iopl)
 AC_CHECK_LIB(amd64, amd64_iopl)
-
-AC_ARG_WITH([bashcompletiondir],
-    AS_HELP_STRING([--with-bashcompletiondir=DIR], [Bash completion directory]),
-    [],
-    [AS_IF([$($PKG_CONFIG --exists bash-completion 2> /dev/null)],
-        [bashcompletiondir=$($PKG_CONFIG --variable=completionsdir bash-completion)],
-	[bashcompletiondir=${datadir}/bash-completion/completions])])
 
 case "$host" in
   *-*-mingw* | *-*-cygwin* | *-*-msvc* )
@@ -112,7 +150,10 @@ AS_IF([test "x$enable_werror" = "xyes"], [
 ])
 
 AM_CONDITIONAL(HAVE_WINDRES, test "$WINDRES" != "")
-AM_CONDITIONAL(HAVE_PYTHON, $HAVE_PYTHON)
+AM_CONDITIONAL(HAVE_BASH_COMPLETION, [test "x$enable_bash_completion" != xno])
+AM_CONDITIONAL(HAVE_DOC, [test "x$enable_doc" != xno])
+AM_CONDITIONAL(HAVE_FONTS, [test "x$enable_fonts" != xno])
+AM_CONDITIONAL(HAVE_ICONS, [test "x$enable_icons" != xno])
 
 dnl Automake v1.8.0 is required, please upgrade!
 
@@ -150,9 +191,7 @@ AC_SUBST(PACKAGE_LICENSE)
 AC_SUBST(PACKAGE_MAINTAINER)
 AC_SUBST(PACKAGE_URL)
 AC_SUBST(PACKAGE_RDNS)
-AC_SUBST(PACKAGE_ISSUES)
-
-AC_SUBST(bashcompletiondir)
+AC_SUBST(PACKAGE_BUGREPORT)
 
 dnl Shut up the datarootdir warnings.
 AC_DEFUN([AC_DATAROOTDIR_CHECKED])
@@ -175,23 +214,23 @@ pkg/osx/Info.plist
 rpm.spec
 data/Makefile
 src/Makefile
-src/doom.appdata.xml
-src/doom.desktop
-src/doom-screensaver.desktop
+src/Doom.metainfo.xml
+src/Doom.desktop
+src/Doom_Screensaver.desktop
 src/doom/Makefile
-src/heretic.appdata.xml
-src/heretic.desktop
+src/Heretic.metainfo.xml
+src/Heretic.desktop
 src/heretic/Makefile
-src/hexen.appdata.xml
-src/hexen.desktop
+src/Hexen.metainfo.xml
+src/Hexen.desktop
 src/hexen/Makefile
 src/resource.rc
 src/setup-res.rc
 src/setup/Makefile
-src/setup/setup.desktop
+src/setup/Setup.desktop
 src/setup/setup-manifest.xml
-src/strife.appdata.xml
-src/strife.desktop
+src/Strife.metainfo.xml
+src/Strife.desktop
 src/strife/Makefile
 textscreen/Makefile
 textscreen/examples/Makefile

@@ -3,6 +3,8 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
+#define HAVE_DIRENT_H 1
+
 /* Define to 1 if you have the declaration of `strcasecmp', and to 0 if you
    don't. */
 #define HAVE_DECL_STRCASECMP 1

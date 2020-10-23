@@ -113,7 +113,7 @@ byte *rejectmatrix;             // for fast sight rejection
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static mapInfo_t MapInfo[99];
-static char *MapCmdNames[] = {
+static const char *MapCmdNames[] = {
     "SKY1",
     "SKY2",
     "DOUBLESKY",
@@ -796,7 +796,7 @@ static void InitMapInfo(void)
     int mcmdValue;
     mapInfo_t *info;
     char songMulch[10];
-    char *default_sky_name = DEFAULT_SKY_NAME;
+    const char *default_sky_name = DEFAULT_SKY_NAME;
 
     mapMax = 1;
 

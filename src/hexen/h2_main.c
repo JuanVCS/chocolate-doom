@@ -93,7 +93,7 @@ extern boolean askforquit;
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 GameMode_t gamemode;
-char *gamedescription;
+static const char *gamedescription;
 char *iwadfile;
 static char demolumpname[9];    // Demo lump to start playing.
 boolean nomonsters;             // checkparm of -nomonsters
@@ -119,10 +119,26 @@ int maxplayers = MAXPLAYERS;
 static int WarpMap;
 static int demosequence;
 static int pagetic;
-static char *pagename;
+static const char *pagename;
 static char *SavePathConfig;
 
 // CODE --------------------------------------------------------------------
+
+
+static const char * const chat_macro_defaults[10] =
+{
+    HUSTR_CHATMACRO0,
+    HUSTR_CHATMACRO1,
+    HUSTR_CHATMACRO2,
+    HUSTR_CHATMACRO3,
+    HUSTR_CHATMACRO4,
+    HUSTR_CHATMACRO5,
+    HUSTR_CHATMACRO6,
+    HUSTR_CHATMACRO7,
+    HUSTR_CHATMACRO8,
+    HUSTR_CHATMACRO9,
+};
+
 
 void D_BindVariables(void)
 {
@@ -172,6 +188,7 @@ void D_BindVariables(void)
     {
         char buf[12];
 
+        chat_macros[i] = M_StringDuplicate(chat_macro_defaults[i]);
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindStringVariable(buf, &chat_macros[i]);
     }
@@ -422,7 +439,24 @@ void D_DoomMain(void)
     D_SetGameDescription();
     AdjustForMacIWAD();
 
+    //!
+    // @category mod
+    //
+    // Disable auto-loading of .wad files.
+    //
+    if (!M_ParmExists("-noautoload"))
+    {
+        char *autoload_dir;
+        autoload_dir = M_GetAutoloadDir("hexen.wad");
+        // TODO? DEH_AutoLoadPatches(autoload_dir);
+        W_AutoLoadWADs(autoload_dir);
+        free(autoload_dir);
+    }
+
     HandleArgs();
+
+    // Generate the WAD hash table.  Speed things up a bit.
+    W_GenerateHashTable();
 
     I_PrintStartupBanner(gamedescription);
 

@@ -40,15 +40,30 @@ static const iwad_t iwads[] =
     { "doom1.wad",    doom,      shareware,  "Doom Shareware" },
     { "chex.wad",     pack_chex, retail,     "Chex Quest" },
     { "hacx.wad",     pack_hacx, commercial, "Hacx" },
-    { "freedm.wad",   doom2,     commercial, "FreeDM" },
     { "freedoom2.wad", doom2,    commercial, "Freedoom: Phase 2" },
     { "freedoom1.wad", doom,     retail,     "Freedoom: Phase 1" },
+    { "freedm.wad",   doom2,     commercial, "FreeDM" },
     { "heretic.wad",  heretic,   retail,     "Heretic" },
     { "heretic1.wad", heretic,   shareware,  "Heretic Shareware" },
     { "hexen.wad",    hexen,     commercial, "Hexen" },
     //{ "strife0.wad",  strife,    commercial, "Strife" }, // haleyjd: STRIFE-FIXME
     { "strife1.wad",  strife,    commercial, "Strife" },
 };
+
+boolean D_IsIWADName(const char *name)
+{
+    int i;
+
+    for (i = 0; i < arrlen(iwads); i++)
+    {
+        if (!strcasecmp(name, iwads[i].name))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 // Array of locations to search for IWAD files
 //
@@ -385,8 +400,7 @@ static void CheckSteamGUSPatches(void)
 {
     const char *current_path;
     char *install_path;
-    char *patch_path;
-    int len;
+    char *test_patch_path, *patch_path;
 
     // Already configured? Don't stomp on the user's choices.
     current_path = M_GetStringVariable("gus_patch_path");
@@ -402,19 +416,17 @@ static void CheckSteamGUSPatches(void)
         return;
     }
 
-    len = strlen(install_path) + strlen(STEAM_BFG_GUS_PATCHES) + 20;
-    patch_path = malloc(len);
-    M_snprintf(patch_path, len, "%s\\%s\\ACBASS.PAT",
-               install_path, STEAM_BFG_GUS_PATCHES);
+    patch_path = M_StringJoin(install_path, "\\", STEAM_BFG_GUS_PATCHES,
+                              NULL);
+    test_patch_path = M_StringJoin(patch_path, "\\ACBASS.PAT", NULL);
 
     // Does acbass.pat exist? If so, then set gus_patch_path.
-    if (M_FileExists(patch_path))
+    if (M_FileExists(test_patch_path))
     {
-        M_snprintf(patch_path, len, "%s\\%s",
-                   install_path, STEAM_BFG_GUS_PATCHES);
         M_SetVariable("gus_patch_path", patch_path);
     }
 
+    free(test_patch_path);
     free(patch_path);
     free(install_path);
 }
@@ -450,15 +462,8 @@ static void CheckDOSDefaults(void)
 
 static boolean DirIsFile(const char *path, const char *filename)
 {
-    size_t path_len;
-    size_t filename_len;
-
-    path_len = strlen(path);
-    filename_len = strlen(filename);
-
-    return path_len >= filename_len + 1
-        && path[path_len - filename_len - 1] == DIR_SEPARATOR
-        && !strcasecmp(&path[path_len - filename_len], filename);
+    return strchr(path, DIR_SEPARATOR) != NULL
+        && !strcasecmp(M_BaseName(path), filename);
 }
 
 // Check if the specified directory contains the specified IWAD
@@ -491,6 +496,7 @@ static char *CheckDirectoryHasIWAD(const char *dir, const char *iwadname)
         filename = M_StringJoin(dir, DIR_SEPARATOR_S, iwadname, NULL);
     }
 
+    free(probe);
     probe = M_FileCaseExists(filename);
     free(filename);
     if (probe != NULL)
@@ -532,19 +538,12 @@ static char *SearchDirectoryForIWAD(const char *dir, int mask, GameMission_t *mi
 // When given an IWAD with the '-iwad' parameter,
 // attempt to identify it by its name.
 
-static GameMission_t IdentifyIWADByName(char *name, int mask)
+static GameMission_t IdentifyIWADByName(const char *name, int mask)
 {
     size_t i;
     GameMission_t mission;
-    char *p;
 
-    p = strrchr(name, DIR_SEPARATOR);
-
-    if (p != NULL)
-    {
-        name = p + 1;
-    }
-
+    name = M_BaseName(name);
     mission = none;
 
     for (i=0; i<arrlen(iwads); ++i)
@@ -623,7 +622,7 @@ static void AddXdgDirs(void)
 
     if (env == NULL)
     {
-        char *homedir = getenv("HOME");
+        const char *homedir = getenv("HOME");
         if (homedir == NULL)
         {
             homedir = "/";
@@ -658,13 +657,44 @@ static void AddXdgDirs(void)
     // source ports is /usr/share/games/doom - we support this through the
     // XDG_DATA_DIRS mechanism, through which it can be overridden.
     AddIWADPath(env, "/games/doom");
+    AddIWADPath(env, "/doom");
 
     // The convention set by RBDOOM-3-BFG is to install Doom 3: BFG
     // Edition into this directory, under which includes the Doom
     // Classic WADs.
     AddIWADPath(env, "/games/doom3bfg/base/wads");
 }
-#endif
+
+#ifndef __MACOSX__
+// Steam on Linux allows installing some select Windows games,
+// including the classic Doom series (running DOSBox via Wine).  We
+// could parse *.vdf files to more accurately detect installation
+// locations, but the defaults are likely to be good enough for just
+// about everyone.
+static void AddSteamDirs(void)
+{
+    char *homedir, *steampath;
+
+    homedir = getenv("HOME");
+    if (homedir == NULL)
+    {
+        homedir = "/";
+    }
+    steampath = M_StringJoin(homedir, "/.steam/root/steamapps/common", NULL);
+
+    AddIWADPath(steampath, "/Doom 2/base");
+    AddIWADPath(steampath, "/Master Levels of Doom/doom2");
+    AddIWADPath(steampath, "/Ultimate Doom/base");
+    AddIWADPath(steampath, "/Final Doom/base");
+    AddIWADPath(steampath, "/DOOM 3 BFG Edition/base/wads");
+    AddIWADPath(steampath, "/Heretic Shadow of the Serpent Riders/base");
+    AddIWADPath(steampath, "/Hexen/base");
+    AddIWADPath(steampath, "/Hexen Deathkings of the Dark Citadel/base");
+    AddIWADPath(steampath, "/Strife");
+    free(steampath);
+}
+#endif // __MACOSX__
+#endif // !_WIN32
 
 //
 // Build a list of IWAD files
@@ -681,6 +711,10 @@ static void BuildIWADDirList(void)
 
     // Look in the current directory.  Doom always does this.
     AddIWADDir(".");
+
+    // Next check the directory where the executable is located. This might
+    // be different from the current directory.
+    AddIWADDir(M_DirName(myargv[0]));
 
     // Add DOOMWADDIR if it is in the environment
     env = getenv("DOOMWADDIR");
@@ -720,6 +754,9 @@ static void BuildIWADDirList(void)
     AddIWADDir(VITA_CWD "/pwads/strife");
 #else
     AddXdgDirs();
+#ifndef __MACOSX__
+    AddSteamDirs();
+#endif
 #endif
 
     // Don't run this function again.
@@ -760,6 +797,7 @@ char *D_FindWADByName(const char *name)
         {
             return probe;
         }
+        free(probe);
 
         // Construct a string for the full path
 
@@ -812,7 +850,7 @@ char *D_TryFindWADByName(const char *filename)
 char *D_FindIWAD(int mask, GameMission_t *mission)
 {
     char *result;
-    char *iwadfile;
+    const char *iwadfile;
     int iwadparm;
     int i;
 
@@ -899,7 +937,7 @@ const iwad_t **D_FindAllIWADs(int mask)
 // Get the IWAD name used for savegames.
 //
 
-const char *D_SaveGameIWADName(GameMission_t gamemission)
+const char *D_SaveGameIWADName(GameMission_t gamemission, GameVariant_t gamevariant)
 {
     size_t i;
 
@@ -909,6 +947,22 @@ const char *D_SaveGameIWADName(GameMission_t gamemission)
     // Note that we match on gamemission rather than on IWAD name.
     // This ensures that doom1.wad and doom.wad saves are stored
     // in the same place.
+
+    if (gamevariant == freedoom)
+    {
+        if (gamemission == doom)
+        {
+            return "freedoom1.wad";
+        }
+        else if (gamemission == doom2)
+        {
+            return "freedoom2.wad";
+        }
+    }
+    else if (gamevariant == freedm && gamemission == doom2)
+    {
+        return "freedm.wad";
+    }
 
     for (i=0; i<arrlen(iwads); ++i)
     {

@@ -2877,7 +2877,7 @@ static void DragonSeek(mobj_t * actor, angle_t thresh, angle_t turnMax)
     {                           // attack the destination mobj if it's attackable
         mobj_t *oldTarget;
 
-        if (abs(actor->angle - R_PointToAngle2(actor->x, actor->y,
+        if (abs((int) actor->angle - (int) R_PointToAngle2(actor->x, actor->y,
                                                target->x,
                                                target->y)) < ANG45 / 2)
         {
@@ -2915,9 +2915,9 @@ static void DragonSeek(mobj_t * actor, angle_t thresh, angle_t turnMax)
                 mo = P_FindMobjFromTID(target->args[i], &search);
                 angleToSpot = R_PointToAngle2(actor->x, actor->y,
                                               mo->x, mo->y);
-                if (abs(angleToSpot - angleToTarget) < bestAngle)
+                if (abs((int) angleToSpot - (int) angleToTarget) < bestAngle)
                 {
-                    bestAngle = abs(angleToSpot - angleToTarget);
+                    bestAngle = abs((int) angleToSpot - (int) angleToTarget);
                     bestArg = i;
                 }
             }
@@ -2986,13 +2986,13 @@ void A_DragonFlight(mobj_t * actor)
         }
         angle = R_PointToAngle2(actor->x, actor->y, actor->target->x,
                                 actor->target->y);
-        if (abs(actor->angle - angle) < ANG45 / 2
+        if (abs((int) actor->angle - (int) angle) < ANG45 / 2
             && P_CheckMeleeRange(actor))
         {
             P_DamageMobj(actor->target, actor, actor, HITDICE(8));
             S_StartSound(actor, SFX_DRAGON_ATTACK);
         }
-        else if (abs(actor->angle - angle) <= ANG1 * 20)
+        else if (abs((int) actor->angle - (int) angle) <= ANG1 * 20)
         {
             P_SetMobjState(actor, actor->info->missilestate);
             S_StartSound(actor, SFX_DRAGON_ATTACK);
@@ -4032,7 +4032,7 @@ void A_SorcBallOrbit(mobj_t * actor)
         case SORC_STOPPING:    // Balls stopping
             if ((parent->special2.i == actor->type) &&
                 (parent->args[1] > SORCBALL_SPEED_ROTATIONS) &&
-                (abs(angle - (parent->angle >> ANGLETOFINESHIFT)) <
+                (abs((int) angle - (int) (parent->angle >> ANGLETOFINESHIFT)) <
                  (30 << 5)))
             {
                 // Can stop now
@@ -4876,13 +4876,10 @@ void A_FreezeDeathChunks(mobj_t * actor)
                          actor->z + (r1 * actor->height / 255),
                          MT_ICECHUNK);
         P_SetMobjState(mo, mo->info->spawnstate + (P_Random() % 3));
-        if (mo)
-        {
-            mo->momz = FixedDiv(mo->z - actor->z, actor->height) << 2;
-            mo->momx = P_SubRandom() << (FRACBITS - 7);
-            mo->momy = P_SubRandom() << (FRACBITS - 7);
-            A_IceSetTics(mo);   // set a random tic wait
-        }
+        mo->momz = FixedDiv(mo->z - actor->z, actor->height) << 2;
+        mo->momx = P_SubRandom() << (FRACBITS - 7);
+        mo->momy = P_SubRandom() << (FRACBITS - 7);
+        A_IceSetTics(mo);   // set a random tic wait
     }
     for (i = 12 + (P_Random() & 15); i >= 0; i--)
     {
@@ -4896,13 +4893,10 @@ void A_FreezeDeathChunks(mobj_t * actor)
                          actor->z + (r1 * actor->height / 255),
                          MT_ICECHUNK);
         P_SetMobjState(mo, mo->info->spawnstate + (P_Random() % 3));
-        if (mo)
-        {
-            mo->momz = FixedDiv(mo->z - actor->z, actor->height) << 2;
-            mo->momx = P_SubRandom() << (FRACBITS - 7);
-            mo->momy = P_SubRandom() << (FRACBITS - 7);
-            A_IceSetTics(mo);   // set a random tic wait
-        }
+        mo->momz = FixedDiv(mo->z - actor->z, actor->height) << 2;
+        mo->momx = P_SubRandom() << (FRACBITS - 7);
+        mo->momy = P_SubRandom() << (FRACBITS - 7);
+        A_IceSetTics(mo);   // set a random tic wait
     }
     if (actor->player)
     {                           // attach the player's view to a chunk of ice

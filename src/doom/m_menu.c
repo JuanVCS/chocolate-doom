@@ -49,6 +49,7 @@
 #include "m_argv.h"
 #include "m_controls.h"
 #include "p_saveg.h"
+#include "p_setup.h"
 
 #include "s_sound.h"
 
@@ -634,8 +635,28 @@ void M_DoSave(int slot)
 //
 static void SetDefaultSaveName(int slot)
 {
-    M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE - 1,
-               "JOYSTICK SLOT %i", itemOn + 1);
+    // map from IWAD or PWAD?
+    if (W_IsIWADLump(maplumpinfo) && strcmp(savegamedir, ""))
+    {
+        M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE,
+                   "%s", maplumpinfo->name);
+    }
+    else
+    {
+        char *wadname = M_StringDuplicate(W_WadNameForLump(maplumpinfo));
+        char *ext = strrchr(wadname, '.');
+
+        if (ext != NULL)
+        {
+            *ext = '\0';
+        }
+
+        M_snprintf(savegamestrings[itemOn], SAVESTRINGSIZE,
+                   "%s (%s)", maplumpinfo->name,
+                   wadname);
+        free(wadname);
+    }
+    M_ForceUppercase(savegamestrings[itemOn]);
     joypadSave = false;
 }
 
@@ -692,7 +713,7 @@ void M_SaveGame (int choice)
 //
 //      M_QuickSave
 //
-char    tempstring[80];
+static char tempstring[90];
 
 void M_QuickSaveResponse(int key)
 {
@@ -722,8 +743,9 @@ void M_QuickSave(void)
 	quickSaveSlot = -2;	// means to pick a slot now
 	return;
     }
-    DEH_snprintf(tempstring, 80, QSPROMPT, savegamestrings[quickSaveSlot]);
-    M_StartMessage(tempstring,M_QuickSaveResponse,true);
+    DEH_snprintf(tempstring, sizeof(tempstring),
+                 QSPROMPT, savegamestrings[quickSaveSlot]);
+    M_StartMessage(tempstring, M_QuickSaveResponse, true);
 }
 
 
@@ -754,8 +776,9 @@ void M_QuickLoad(void)
 	M_StartMessage(DEH_String(QSAVESPOT),NULL,false);
 	return;
     }
-    DEH_snprintf(tempstring, 80, QLPROMPT, savegamestrings[quickSaveSlot]);
-    M_StartMessage(tempstring,M_QuickLoadResponse,true);
+    DEH_snprintf(tempstring, sizeof(tempstring),
+                 QLPROMPT, savegamestrings[quickSaveSlot]);
+    M_StartMessage(tempstring, M_QuickLoadResponse, true);
 }
 
 
@@ -1386,71 +1409,73 @@ boolean M_Responder (event_t* ev)
     {
         // Simulate key presses from joystick events to interact with the menu.
 
-	if (ev->data3 < 0)
-	{
-	    key = key_menu_up;
-	    joywait = I_GetTime() + 5;
-	}
-	else if (ev->data3 > 0)
-	{
-	    key = key_menu_down;
-	    joywait = I_GetTime() + 5;
-	}
-		
-	if (ev->data2 < 0)
-	{
-	    key = key_menu_left;
-	    joywait = I_GetTime() + 2;
-	}
-	else if (ev->data2 > 0)
-	{
-	    key = key_menu_right;
-	    joywait = I_GetTime() + 2;
-	}
+        if (menuactive)
+        {
+            if (ev->data3 < 0)
+            {
+                key = key_menu_up;
+                joywait = I_GetTime() + 5;
+            }
+            else if (ev->data3 > 0)
+            {
+                key = key_menu_down;
+                joywait = I_GetTime() + 5;
+            }
+            if (ev->data2 < 0)
+            {
+                key = key_menu_left;
+                joywait = I_GetTime() + 2;
+            }
+            else if (ev->data2 > 0)
+            {
+                key = key_menu_right;
+                joywait = I_GetTime() + 2;
+            }
 
 #define JOY_BUTTON_MAPPED(x) ((x) >= 0)
 #define JOY_BUTTON_PRESSED(x) (JOY_BUTTON_MAPPED(x) && (ev->data1 & (1 << (x))) != 0)
 
-        if (JOY_BUTTON_PRESSED(joybfire))
-        {
-            // Simulate a 'Y' keypress when Doom show a Y/N dialog with Fire button.
-            if (messageToPrint && messageNeedsInput)
+            if (JOY_BUTTON_PRESSED(joybfire))
             {
-                key = key_menu_confirm;
-            }
-            // Simulate pressing "Enter" when we are supplying a save slot name
-            else if (saveStringEnter)
-            {
-                key = KEY_ENTER;
-            }
-            else
-            {
-                // if selecting a save slot via joypad, set a flag
-                if (currentMenu == &SaveDef)
+                // Simulate a 'Y' keypress when Doom show a Y/N dialog with Fire button.
+                if (messageToPrint && messageNeedsInput)
                 {
-                    joypadSave = true;
+                    key = key_menu_confirm;
                 }
-                key = key_menu_forward;
+                // Simulate pressing "Enter" when we are supplying a save slot name
+                else if (saveStringEnter)
+                {
+                    key = KEY_ENTER;
+                }
+                else
+                {
+                    // if selecting a save slot via joypad, set a flag
+                    if (currentMenu == &SaveDef)
+                    {
+                        joypadSave = true;
+                    }
+                    key = key_menu_forward;
+                }
+                joywait = I_GetTime() + 5;
             }
-            joywait = I_GetTime() + 5;
-        }
-        if (JOY_BUTTON_PRESSED(joybuse))
-        {
-            // Simulate a 'N' keypress when Doom show a Y/N dialog with Use button.
-            if (messageToPrint && messageNeedsInput)
+            if (JOY_BUTTON_PRESSED(joybuse))
             {
-                key = key_menu_abort;
+                // Simulate a 'N' keypress when Doom show a Y/N dialog with Use button.
+                if (messageToPrint && messageNeedsInput)
+                {
+                    key = key_menu_abort;
+                }
+                // If user was entering a save name, back out
+                else if (saveStringEnter)
+                {
+                    key = KEY_ESCAPE;
+                }
+                else
+                {
+                    key = key_menu_back;
+                }
+                joywait = I_GetTime() + 5;
             }
-            // If user was entering a save name, back out
-            else if (saveStringEnter)
-            {
-                key = KEY_ESCAPE;
-            }
-            else
-            {
-                key = key_menu_back;
-            }
-            joywait = I_GetTime() + 5;
         }
         if (JOY_BUTTON_PRESSED(joybmenu))
         {
@@ -1929,9 +1954,9 @@ void M_Drawer (void)
 	y = SCREENHEIGHT/2 - M_StringHeight(messageString) / 2;
 	while (messageString[start] != '\0')
 	{
-	    int foundnewline = 0;
+	    boolean foundnewline = false;
 
-            for (i = 0; i < strlen(messageString + start); i++)
+            for (i = 0; messageString[start + i] != '\0'; i++)
             {
                 if (messageString[start + i] == '\n')
                 {
@@ -1942,7 +1967,7 @@ void M_Drawer (void)
                         string[i] = '\0';
                     }
 
-                    foundnewline = 1;
+                    foundnewline = true;
                     start += i + 1;
                     break;
                 }
@@ -1982,7 +2007,7 @@ void M_Drawer (void)
     {
         name = DEH_String(currentMenu->menuitems[i].name);
 
-	if (name[0])
+	if (name[0] && W_CheckNumForName(name) > 0)
 	{
 	    V_DrawPatchDirect (x, y, W_CacheLumpName(name, PU_CACHE));
 	}

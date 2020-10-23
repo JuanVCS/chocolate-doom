@@ -2187,7 +2187,7 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
 // 
 // [STRIFE] Verified unmodified
 //
-void G_RecordDemo (char* name)
+void G_RecordDemo (const char* name)
 {
     size_t demoname_size;
     int             i;
@@ -2274,7 +2274,7 @@ void G_DeferedPlayDemo(const char *name)
 
 // Generate a string describing a demo version
 // [STRIFE] Modified to handle the one and only Strife demo version.
-static char *DemoVersionDescription(int version)
+static const char *DemoVersionDescription(int version)
 {
     static char resultbuf[16];
  
@@ -2326,14 +2326,14 @@ void G_DoPlayDemo (void)
     */
     else
     {
-        char *message = "Demo is from a different game version!\n"
-                        "(read %i, should be %i)\n"
-                        "\n"
-                        "*** You may need to upgrade your version "
-                            "of Strife to v1.1 or later. ***\n"
-                        "    See: https://www.doomworld.com/classicdoom"
-                                  "/info/patches.php\n"
-                        "    This appears to be %s.";
+        const char *message = "Demo is from a different game version!\n"
+                              "(read %i, should be %i)\n"
+                              "\n"
+                              "*** You may need to upgrade your version "
+                                  "of Strife to v1.1 or later. ***\n"
+                              "    See: https://www.doomworld.com/classicdoom"
+                                        "/info/patches.php\n"
+                              "    This appears to be %s.";
 
         I_Error(message, demoversion, STRIFE_VERSION,
                          DemoVersionDescription(demoversion));

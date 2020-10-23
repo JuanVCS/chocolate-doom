@@ -1,20 +1,24 @@
 language: c
 
-compiler: gcc
+cache: ccache
 
-# Travis uses Ubuntu 12.04 (Precise) for builds by default, which is too
-# old and missing the SDL2 packages, so use Trusty instead.
+compiler:
+  - gcc
+  - clang
+
 sudo: required
-dist: trusty
+dist: bionic
 
-env:
-    - ANALYZE=false
-    - ANALYZE=true
+matrix:
+  include:
+    - compiler: gcc
+      env: ANALYZE=true
 
 addons:
     apt:
         packages:
         - cppcheck
+        - libpng-dev
         - libsdl2-dev
         - libsdl2-mixer-dev
         - libsdl2-net-dev
@@ -26,5 +30,5 @@ script: ./.travis.sh
 branches:
     only:
     - master
-    - sdl2-branch
-
+    - c++-clean
+    - vanilla-net

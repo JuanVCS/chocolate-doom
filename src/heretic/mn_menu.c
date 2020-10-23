@@ -69,7 +69,7 @@ typedef enum
 typedef struct
 {
     ItemType_t type;
-    char *text;
+    const char *text;
     boolean(*func) (int option);
     int option;
     MenuType_t menu;
@@ -459,7 +459,7 @@ void MN_Ticker(void)
 //
 //---------------------------------------------------------------------------
 
-char *QuitEndMsg[] = {
+const char *QuitEndMsg[] = {
     "ARE YOU SURE YOU WANT TO QUIT?",
     "ARE YOU SURE YOU WANT TO END THE GAME?",
     "DO YOU WANT TO QUICKSAVE THE GAME NAMED",
@@ -1525,9 +1525,10 @@ boolean MN_Responder(event_t * event)
         {
             if (slotptr)
             {
-                *textBuffer-- = 0;
-                *textBuffer = ASCII_CURSOR;
+                *textBuffer = 0;
                 slotptr--;
+                textBuffer = &SlotText[currentSlot][slotptr];
+                *textBuffer = ASCII_CURSOR;
             }
             return (true);
         }

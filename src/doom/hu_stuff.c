@@ -17,6 +17,7 @@
 
 
 #include <ctype.h>
+#include <stdlib.h>
 
 #include "doomdef.h"
 #include "doomkeys.h"
@@ -62,19 +63,7 @@
 
 
 
-char *chat_macros[10] =
-{
-    HUSTR_CHATMACRO0,
-    HUSTR_CHATMACRO1,
-    HUSTR_CHATMACRO2,
-    HUSTR_CHATMACRO3,
-    HUSTR_CHATMACRO4,
-    HUSTR_CHATMACRO5,
-    HUSTR_CHATMACRO6,
-    HUSTR_CHATMACRO7,
-    HUSTR_CHATMACRO8,
-    HUSTR_CHATMACRO9
-};
+char *chat_macros[10];
 
 const char *player_names[] =
 {
@@ -522,7 +511,7 @@ void HU_Ticker(void)
 			    message_counter = HU_MSGTIMEOUT;
 			    if ( gamemode == commercial )
 			      S_StartSound(0, sfx_radio);
-			    else
+			    else if (gameversion > exe_doom_1_2)
 			      S_StartSound(0, sfx_tink);
 			}
 			HUlib_resetIText(&w_inputbuffer[i]);

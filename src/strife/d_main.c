@@ -396,6 +396,22 @@ void D_Display (void)
 // Add configuration file variable bindings.
 //
 
+
+static const char * const chat_macro_defaults[10] =
+{
+    HUSTR_CHATMACRO0,
+    HUSTR_CHATMACRO1,
+    HUSTR_CHATMACRO2,
+    HUSTR_CHATMACRO3,
+    HUSTR_CHATMACRO4,
+    HUSTR_CHATMACRO5,
+    HUSTR_CHATMACRO6,
+    HUSTR_CHATMACRO7,
+    HUSTR_CHATMACRO8,
+    HUSTR_CHATMACRO9
+};
+
+
 void D_BindVariables(void)
 {
     int i;
@@ -460,6 +476,7 @@ void D_BindVariables(void)
     {
         char buf[12];
 
+        chat_macros[i] = M_StringDuplicate(chat_macro_defaults[i]);
         M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindStringVariable(buf, &chat_macros[i]);
     }
@@ -757,7 +774,7 @@ void D_QuitGame(void)
 // These are from the original source: some of them are perhaps
 // not used in any dehacked patches
 
-static char *banners[] =
+static const char *banners[] =
 {
     // strife1.wad:
 
@@ -843,7 +860,7 @@ void D_IdentifyVersion(void)
         // filepath.
         if((p = M_CheckParm("-iwad")) && p < myargc - 1)
         {
-            char   *iwad     = myargv[p + 1];
+            const char *iwad = myargv[p + 1];
             size_t  len      = strlen(iwad) + 1;
             char   *iwadpath = Z_Malloc(len, PU_STATIC, NULL);
             char   *voiceswad;
@@ -855,10 +872,8 @@ void D_IdentifyVersion(void)
             voiceswad = M_SafeFilePath(iwadpath, "voices.wad");
             Z_Free(iwadpath);
 
-            if(!M_FileExists(voiceswad))
-                Z_Free(voiceswad);
-            else
-                name = voiceswad; // STRIFE-FIXME: memory leak!!
+            name = M_FileCaseExists(voiceswad);
+            Z_Free(voiceswad);
         }
 
         // not found? try global search paths
@@ -877,6 +892,7 @@ void D_IdentifyVersion(void)
         {
             // add it.
             D_AddFile(name);
+            free(name);
         }
     }
 }
@@ -958,7 +974,7 @@ static boolean D_AddFile(char *filename)
 // Some dehacked mods replace these.  These are only displayed if they are 
 // replaced by dehacked.
 // haleyjd 08/22/2010: [STRIFE] altered to match strings from binary
-static char *copyright_banners[] =
+static const char *copyright_banners[] =
 {
     "===========================================================================\n"
     "ATTENTION:  This version of STRIFE has extra files added to it.\n"
@@ -1004,8 +1020,8 @@ void PrintDehackedBanners(void)
 
 static struct 
 {
-    char *description;
-    char *cmdline;
+    const char *description;
+    const char *cmdline;
     GameVersion_t version;
 } gameversions[] = {
     { "Strife 1.2",          "1.2",       exe_strife_1_2  },
@@ -1146,7 +1162,7 @@ static void D_SetChar(char c)
 //
 // D_DrawText
 //
-static void D_DrawText(char *string, int bc, int fc)
+static void D_DrawText(const char *string, int bc, int fc)
 {
     int column;
     int row;
@@ -1735,6 +1751,20 @@ void D_DoomMain (void)
     D_AddFile(iwadfile);
     W_CheckCorrectIWAD(strife);
     D_IdentifyVersion();
+
+    //!
+    // @category mod
+    //
+    // Disable auto-loading of .wad files.
+    //
+    if (!M_ParmExists("-noautoload"))
+    {
+        char *autoload_dir;
+        autoload_dir = M_GetAutoloadDir("strife1.wad");
+        DEH_AutoLoadPatches(autoload_dir);
+        W_AutoLoadWADs(autoload_dir);
+        free(autoload_dir);
+    }
 
     // Load dehacked patches specified on the command line.
     DEH_ParseCommandLine();

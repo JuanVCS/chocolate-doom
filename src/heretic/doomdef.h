@@ -553,6 +553,7 @@ extern ticcmd_t *netcmds;
 extern mapthing_t *deathmatch_p;
 extern mapthing_t deathmatchstarts[10];
 extern mapthing_t playerstarts[MAXPLAYERS];
+extern boolean playerstartsingame[MAXPLAYERS];
 
 extern int mouseSensitivity;
 
@@ -679,7 +680,7 @@ uint32_t SV_ReadLong(void);
 extern char *savegamedir;
 
 void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
-                  char *name);
+                  const char *name);
 // only called by startup code
 
 void G_PlayDemo(char *name);

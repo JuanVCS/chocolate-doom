@@ -36,7 +36,9 @@ i_pcsound.c       \
 i_sdlmusic.c      \
 i_sdlsound.c      \
 i_sound.c         \
+i_musicpack.c     \
 i_timer.c         \
+i_glob.c          \
 ../vita/i_video.c \
 ../vita/shader.c  \
 i_videohr.c       \
@@ -54,6 +56,7 @@ net_gui.c         \
 net_io.c          \
 net_loop.c        \
 net_packet.c      \
+net_petname.c     \
 net_query.c       \
 net_sdl.c         \
 net_server.c      \
@@ -129,7 +132,7 @@ LIBS = $(COMMON_LIBS) $(EXTERNAL_LIBS)
 
 CFLAGS =\
 -mtune=cortex-a9 -mfpu=neon -mthumb                       \
--O3 -g                                                    \
+-O0 -g3                                                   \
 -Wl,-q -fsigned-char -fno-short-enums -flto               \
 -Wall -Wdeclaration-after-statement -Wredundant-decls     \
 -D_REENTRANT -DHAVE_CONFIG_H                              \

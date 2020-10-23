@@ -26,14 +26,14 @@ EXTRA_DIST=                                     \
     setup_icon.c
 
 appdir = $(prefix)/share/applications
-app_DATA = @PROGRAM_PREFIX@setup.desktop
+app_DATA = @PACKAGE_RDNS@.Setup.desktop
 
 CLEANFILES = $(app_DATA)
 
-@PROGRAM_PREFIX@setup.desktop : setup.desktop
-	cp setup.desktop $@
+@PACKAGE_RDNS@.Setup.desktop : Setup.desktop
+	cp Setup.desktop $@
 
-if HAVE_PYTHON
+if HAVE_ICONS
 
 setup_icon.c : $(top_builddir)/data/setup.png
 	$(top_builddir)/data/convert-icon $(top_builddir)/data/setup.png $@

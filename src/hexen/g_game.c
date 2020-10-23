@@ -1950,7 +1950,7 @@ void G_WriteDemoTiccmd(ticcmd_t * cmd)
 */
 
 void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
-                  char *name)
+                  const char *name)
 {
     int i;
     int maxsize;
@@ -2042,9 +2042,9 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
 ===================
 */
 
-char *defdemoname;
+static const char *defdemoname;
 
-void G_DeferedPlayDemo(char *name)
+void G_DeferedPlayDemo(const char *name)
 {
     defdemoname = name;
     gameaction = ga_playdemo;

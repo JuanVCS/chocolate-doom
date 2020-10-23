@@ -63,10 +63,8 @@ vita2d_shader *Vita_SetShader(VitaShader shaderType)
             break;
     }
 
-    vita2d_texture_set_program(shader->vertexProgram, shader->fragmentProgram);
-    vita2d_texture_set_wvp(shader->wvpParam);
-    vita2d_texture_set_vertexInput(&shader->vertexInput);
-    vita2d_texture_set_fragmentInput(&shader->fragmentInput);
+    vita2d_set_texture_shader(shader);
+    vita2d_set_texture_wvp_uniform(shader);
 
     for(int i = 0; i < 3; i++)
     {
